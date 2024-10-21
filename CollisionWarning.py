@@ -45,7 +45,7 @@ async def when_either_bumped(robot):
 @event(robot.when_play)
 async def avoidCollision(robot):
     global ROBOT_TOUCHED
-    while ROBOT_TOUCHED = False:
+    while ROBOT_TOUCHED == False:
         readings = (await robot.get_ir_proximity()).sensors
         middle_readings = readings[3]
         proximity = 4095/(middle_readings + 1)
@@ -67,6 +67,7 @@ async def avoidCollision(robot):
 
         if ROBOT_TOUCHED:
             await robot.set_lights_rgb(255, 0, 0)
+            await robot.set_wheel_speeds(0,0)
 
 
 # start the robot
