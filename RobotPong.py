@@ -78,7 +78,7 @@ async def robotPong(robot):
                 await robot.turn_left(cReflection)
                 await robot.set_wheel_speeds(15,15)
             else:
-                await robot.turn_left(cReflection)
+                await robot.turn_right(cReflection)
                 await robot.set_wheel_speeds(15,15)
 
         if ROBOT_TOUCHED == True:
