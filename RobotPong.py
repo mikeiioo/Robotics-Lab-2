@@ -53,8 +53,7 @@ async def changeColor(robot):
 
 @event(robot.when_play)
 async def robotPong(robot):
-    readings = (await robot.get_ir_proximity()).sensors
-
+    await robot.set_lights_rgb(0, 255, 255)
     """
     Use the following two lines somewhere in your code to calculate the
     angle and direction of reflection from a list of IR readings:
@@ -65,31 +64,30 @@ async def robotPong(robot):
     reflect.
     """
     while ROBOT_TOUCHED == False:
-        await robot.set_lights_rgb(0, 255, 255)
+        readings = (await robot.get_ir_proximity()).sensors
         await robot.set_wheel_speeds(15,15)
-        await cDistance, cAngle = angleOfClosestWall(readings)
+       # await angleOfClosestWall(readings)
+        cDistance, cAngle = angleOfClosestWall(readings)
+        print(cDistance)
         if cDistance < 20:
             await robot.set_wheel_speeds(0,0)
             await changeColor(robot)
             await robotNote(robot)
-            await cDirection, cReflection = calculateReflectionAngle
+            cDirection, cReflection = calculateReflectionAngle(cAngle)
             if cDirection == "left":
                 await robot.turn_left(cReflection)
                 await robot.set_wheel_speeds(15,15)
             else:
-                await robot.turn_right(cReflection)
+                await robot.turn_left(cReflection)
                 await robot.set_wheel_speeds(15,15)
 
-       if ROBOT_TOUCHED == True:
+        if ROBOT_TOUCHED == True:
             await robot.set_lights_rgb(255, 0, 0)
             await robot.set_wheel_speeds(0,0)
 
 
 
-        
-
-
-async def angleOfClosestWall(readings):
+def angleOfClosestWall(readings):
     """Remember that this function can be autograded!"""
     IR_ANGLES = [-65.3, -38.0, -20.0, -3.0, 14.25, 34.0, 65.3]
     angle = 0
@@ -107,13 +105,13 @@ async def angleOfClosestWall(readings):
     return (final_distance, angle)
 
 
-async def calculateReflectionAngle(angle):
+def calculateReflectionAngle(angle):
     """Remember that this function can be autograded!"""
     reflection = 0
     direction = ""
     if angle > 0:
-       reflection = 180 - (2 * angle)
-       direction = "left"
+        reflection = 180 - (2 * angle)
+        direction = "left"
        
     else:
         reflection = 180 + (2 * angle)
@@ -124,22 +122,22 @@ async def calculateReflectionAngle(angle):
     return (direction, reflection)
 
 
-def robotNote(robot):
+async def robotNote(robot):
     global NOTENUM
     NOTENUM += 1
-    if NOTENUM % 7 == 1
+    if NOTENUM % 7 == 1:
         await robot.play_note(Note.C5, 0.5)   
-    elif NOTENUM % 7 == 2
+    elif NOTENUM % 7 == 2:
         await robot.play_note(Note.D5, 0.5)   
-    elif NOTENUM % 7 == 3
+    elif NOTENUM % 7 == 3:
         await robot.play_note(Note.E5, 0.5)
-    elif NOTENUM % 7 == 4
+    elif NOTENUM % 7 == 4:
         await robot.play_note(Note.F5, 0.5)
-    elif NOTENUM % 7 == 5
+    elif NOTENUM % 7 == 5:
         await robot.play_note(Note.G5, 0.5)
-    elif NOTENUM % 7 == 6
+    elif NOTENUM % 7 == 6:
         await robot.play_note(Note.A5, 0.5)
-    elif NOTENUM % 7 == 0
+    elif NOTENUM % 7 == 0:
         await robot.play_note(Note.B5, 0.5)   
 
 # start the robot
