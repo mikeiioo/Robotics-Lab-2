@@ -16,7 +16,7 @@ IR_ANGLES = [-65.3, -38.0, -20.0, -3.0, 14.25, 34.0, 65.3]
 ROBOT_TOUCHED = False
 COLOR = True
 NUM = 0
-
+NOTENUM = 0
 # EITHER BUTTON
 @event(robot.when_touched, [True, True])  # User buttons: [(.), (..)]
 async def when_either_touched(robot):
@@ -71,6 +71,7 @@ async def robotPong(robot):
         if cDistance < 20:
             await robot.set_wheel_speeds(0,0)
             await changeColor(robot)
+            await robotNote(robot)
             await cDirection, cReflection = calculateReflectionAngle
             if cDirection == "left":
                 await robot.turn_left(cReflection)
@@ -122,9 +123,24 @@ async def calculateReflectionAngle(angle):
 
     return (direction, reflection)
 
-if ROBOT_TOUCHED:
-    await robot.set_lights_rgb(255, 0, 0)
-    await robot.set_wheel_speeds(0,0)
+
+def robotNote(robot):
+    global NOTENUM
+    NOTENUM += 1
+    if NOTENUM % 7 == 1
+        await robot.play_note(Note.C5, 0.5)   
+    elif NOTENUM % 7 == 2
+        await robot.play_note(Note.D5, 0.5)   
+    elif NOTENUM % 7 == 3
+        await robot.play_note(Note.E5, 0.5)
+    elif NOTENUM % 7 == 4
+        await robot.play_note(Note.F5, 0.5)
+    elif NOTENUM % 7 == 5
+        await robot.play_note(Note.G5, 0.5)
+    elif NOTENUM % 7 == 6
+        await robot.play_note(Note.A5, 0.5)
+    elif NOTENUM % 7 == 0
+        await robot.play_note(Note.B5, 0.5)   
 
 # start the robot
 robot.play()
