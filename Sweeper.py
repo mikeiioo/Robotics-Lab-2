@@ -110,7 +110,18 @@ async def play(robot):
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
     global SPEED, ROBOT_MOVE_DISTANCE
-    pass
+    await robot.reset_navigation() 
+    while ROBOT_TOUCHED == False:
+     if HAS_EXPLORED == False:
+        direction = movementDirection(readings)
+        if direction == "counterclockwise":
+          await robot.explore(robot)
+          await robot.set_wheel_speeds(SPEED,SPEED)
+        else:
+          await robot.explore(robot)
+          await robot.set_wheel_speeds(SPEED,SPEED)
+
+
 
 
 # --------------------------------------------------------
@@ -128,7 +139,17 @@ async def explore(robot):
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
     global SPEED, ROBOT_MOVE_DISTANCE
-    pass
+    readings = (await robot.get_ir_proximity()).sensors
+    left_readings = readings[0]
+    front_readings = readings[3]
+    right_readings = readings[-1]
+    front_proximity = 4095/(front_readings + 1)
+    left_proximity = 4095/(left_readings + 1)
+    right_proximity = 4095/(right_readings + 1)
+    
+    
+    
+
 
 
 
