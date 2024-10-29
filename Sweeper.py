@@ -19,8 +19,8 @@ HAS_SWEPT = False        # The robot has finished sweeping, and
 # Spatial Awareness
 SENSOR2CHECK = 0         # The index of the sensor that corresponds 
                          # with the closest side wall,
-                         # either 0 for left-most or -1 for right-most.
-ROTATION_DIR = 0         # The direction the robot needs to explore.
+                         # either 0 for left-most or -1 for right-most.  ROTATION_DIR SENSOR2CHECK
+ROTATION_DIR = ""         # The direction the robot needs to explore.
 CORNERS = []             # A list that stores all the corners as the robot explores.
 DESTINATION = ()         # The point that is the farthest away from the robot.
                          # This point becomes the robot's final destination.
@@ -112,15 +112,23 @@ async def play(robot):
     global SPEED, ROBOT_MOVE_DISTANCE
     await robot.reset_navigation() 
     while ROBOT_TOUCHED == False:
-     if HAS_EXPLORED == False:
-        direction = movementDirection(readings)
-        if direction == "counterclockwise":
-          await robot.explore(robot)
-          await robot.set_wheel_speeds(SPEED,SPEED)
+      readings = (await robot.get_ir_proximity()).sensors
+      if HAS_EXPLORED == False:
+        await robot.set_lights_rgb(101, 197, 181) 
+        await robot.set_wheel_speeds(SPEED,SPEED)
+        movement = movementDirection(readings)
+        if movement == "clockwise"
+          ROTATION_DIR = "right"
+          SENSOR2CHECK = 0
         else:
-          await robot.explore(robot)
-          await robot.set_wheel_speeds(SPEED,SPEED)
-
+          ROTATION_DIR = "left"
+          SENSOR2CHECK = -1
+        await robot.explore(robot)
+        
+      elif HAS_EXPLORED == True and HAS_SWEPT == False:
+        await robot.set_lights_rgb(255, 64, 0)
+        await robot.sweep(robot)
+      
 
 
 
