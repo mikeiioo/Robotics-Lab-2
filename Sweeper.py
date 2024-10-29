@@ -25,7 +25,7 @@ CORNERS = []             # A list that stores all the corners as the robot explo
 DESTINATION = ()         # The point that is the farthest away from the robot.
                          # This point becomes the robot's final destination.
 FINAL_D = False          # did you make it to the end?
-
+TURN_NUM = 0
 # Constants - Do not change.
 ARRIVAL_THRESHOLD = 5    # We say that the robot has arrived at its final
                          # destination if the distance between the robot's
@@ -73,6 +73,21 @@ def checkPositionArrived(current_position, destination, threshold):
     else:
         return False
 
+# Helper Function 4
+def turn(ROTATION_DIR):
+    global TURN_NUM
+    TURN_NUM += 1
+    if ROTATION_DIR == "right":
+      if TURN_NUM % 2 == 1:
+        return "right"
+      else:
+        return "left"
+    else:
+      if TURN_NUM % 2 == 1:
+        return "left"
+      else:
+        return "right"
+
 # --------------------------------------------------------
 # Implement the these two functions so that the robot
 # will stop and turn on a solid red light
@@ -114,7 +129,6 @@ async def play(robot):
   
     await robot.reset_navigation() 
     readings = (await robot.get_ir_proximity()).sensors
-    await robot.set_wheel_speeds(SPEED,SPEED)
     movement = movementDirection(readings)
     if movement == "clockwise"
       ROTATION_DIR = "right"
@@ -122,6 +136,8 @@ async def play(robot):
     else:
       ROTATION_DIR = "left"
       SENSOR2CHECK = -1
+    await robot.set_wheel_speeds(SPEED,SPEED)
+
       
     while ROBOT_TOUCHED == False: 
       if HAS_EXPLORED == False:
@@ -204,7 +220,47 @@ async def sweep(robot): # Change tolerance for sweep and changed the baby steps
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
     global SPEED, ROBOT_MOVE_DISTANCE, FINAL_D
-    pass
+  
+    readings = (await robot.get_ir_proximity()).sensors
+    front_proximity = 4095/(readings[3] + 1)
+    side_proximity = 4095/(readings[SENSOR2CHECK] + 1)
+  
+    pos = await robot.get_position()
+    current_position = (pos.x, pos.y)
+    if checkPositionArrived(current_position, DESTINATION, ARRIVAL_THRESHOLD):
+      await robot.set_wheel_speeds(0,0)
+      await robot.set_lights_spin_rgb(0, 255, 0)
+      await robot.set_lights_rgb(0, 255, 0)
+      await robot.play_note(Note.C5, 0.5)
+      await robot.play_note(Note.E5, 0.5)
+      await robot.play_note(Note.G5, 0.5)
+      await robot.play_note(Note.C6, 1.0)
+      HAS_SWEPT = True
+    else:
+      if front_proximity <= 10:
+
+        turning = turn(ROTATION_DIR)
+        if turning == "right"
+          await robot.turn_right(90)
+        else:
+          await robot.turn_left(90)
+          
+        readings = (await robot.get_ir_proximity()).sensors
+        front_proximity = 4095/(readings[3] + 1)
+      
+        if front_proximity < ROBOT_MOVE_DISTANCE:
+          await robot.move(front_proximity/3)
+        else:
+          await robot.move(ROBOT_MOVE_DISTANCE)
+          
+        if turning == "right"
+          await robot.turn_right(90)
+        else:
+          await robot.turn_left(90)
+          
+        await robot.set_wheel_speeds(SPEED,SPEED)
+
+        
 
 # start the robot
 robot.play()
