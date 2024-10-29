@@ -130,7 +130,7 @@ async def play(robot):
     await robot.reset_navigation() 
     readings = (await robot.get_ir_proximity()).sensors
     movement = movementDirection(readings)
-    if movement == "clockwise"
+    if movement == "clockwise":
       ROTATION_DIR = "right"
       SENSOR2CHECK = 0
     else:
