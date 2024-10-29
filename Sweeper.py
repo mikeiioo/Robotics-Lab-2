@@ -193,16 +193,16 @@ async def explore(robot):
 
     if side_proximity < 5:
       if ROTATION_DIR == "right":
-          await robot.turn_right(3)
-        else:
-          await robot.turn_left(3)
+        await robot.turn_right(3)
+      else:
+        await robot.turn_left(3)
     elif side_proximity >= 10:
       if ROTATION_DIR == "right":
-          await robot.turn_left(3)
-          await robot.set_wheel_speeds(SPEED, SPEED)
-        else:
-          await robot.turn_right(3)
-          await robot.set_wheel_speeds(SPEED, SPEED)
+        await robot.turn_left(3)
+        await robot.set_wheel_speeds(SPEED, SPEED)
+      else:
+        await robot.turn_right(3)
+        await robot.set_wheel_speeds(SPEED, SPEED)
 
 
 
@@ -242,7 +242,7 @@ async def sweep(robot): # Change tolerance for sweep and changed the baby steps
       if front_proximity <= 10:
 
         turning = turn(ROTATION_DIR)
-        if turning == "right"
+        if turning == "right":
           await robot.turn_right(90)
         else:
           await robot.turn_left(90)
@@ -255,7 +255,7 @@ async def sweep(robot): # Change tolerance for sweep and changed the baby steps
         else:
           await robot.move(ROBOT_MOVE_DISTANCE)
           
-        if turning == "right"
+        if turning == "right":
           await robot.turn_right(90)
         else:
           await robot.turn_left(90)
