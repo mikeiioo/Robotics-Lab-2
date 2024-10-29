@@ -142,10 +142,10 @@ async def play(robot):
     while ROBOT_TOUCHED == False: 
       if HAS_EXPLORED == False:
         await robot.set_lights_rgb(101, 197, 181) 
-        await robot.explore(robot)
+        await explore(robot)
       elif HAS_EXPLORED == True and HAS_SWEPT == False:
         await robot.set_lights_rgb(255, 64, 0)
-        await robot.sweep(robot)
+        await sweep(robot)
       if ROBOT_TOUCHED == True:
         await robot.set_wheel_speeds(0,0)
         await robot.set_lights_rgb(255, 0, 0)
@@ -189,7 +189,7 @@ async def explore(robot):
       else:
         DESTINATION = farthestDistance(currPosition, CORNERS)
         print(f"{DESTINATION} is the farthest corner from the robot.")
-        HAS_EXPLORED == True
+        HAS_EXPLORED = True
 
     if side_proximity < 5:
       await robot.set_wheel_speeds(0,0)
