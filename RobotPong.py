@@ -68,7 +68,6 @@ async def robotPong(robot):
         await robot.set_wheel_speeds(15,15)
        # await angleOfClosestWall(readings)
         cDistance, cAngle = angleOfClosestWall(readings)
-        print(cDistance)
         if cDistance < 20:
             await robot.set_wheel_speeds(0,0)
             await changeColor(robot)
