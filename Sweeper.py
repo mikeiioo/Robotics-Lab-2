@@ -199,8 +199,10 @@ async def explore(robot):
     elif side_proximity >= 10:
       if ROTATION_DIR == "right":
           await robot.turn_left(3)
+          await robot.set_wheel_speeds(SPEED, SPEED)
         else:
           await robot.turn_right(3)
+          await robot.set_wheel_speeds(SPEED, SPEED)
 
 
 
