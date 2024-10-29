@@ -110,28 +110,29 @@ async def play(robot):
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
     global SPEED, ROBOT_MOVE_DISTANCE
+  
     await robot.reset_navigation() 
-    while ROBOT_TOUCHED == False:
-      readings = (await robot.get_ir_proximity()).sensors
+    readings = (await robot.get_ir_proximity()).sensors
+    await robot.set_wheel_speeds(SPEED,SPEED)
+    movement = movementDirection(readings)
+    if movement == "clockwise"
+      ROTATION_DIR = "right"
+      SENSOR2CHECK = 0
+    else:
+      ROTATION_DIR = "left"
+      SENSOR2CHECK = -1
+      
+    while ROBOT_TOUCHED == False: 
       if HAS_EXPLORED == False:
         await robot.set_lights_rgb(101, 197, 181) 
-        await robot.set_wheel_speeds(SPEED,SPEED)
-        movement = movementDirection(readings)
-        if movement == "clockwise"
-          ROTATION_DIR = "right"
-          SENSOR2CHECK = 0
-        else:
-          ROTATION_DIR = "left"
-          SENSOR2CHECK = -1
         await robot.explore(robot)
-        
       elif HAS_EXPLORED == True and HAS_SWEPT == False:
         await robot.set_lights_rgb(255, 64, 0)
         await robot.sweep(robot)
+      if ROBOT_TOUCHED == True:
+        await robot.set_wheel_speeds(0,0)
+        await robot.set_lights_rgb(255, 0, 0)
       
-
-
-
 # --------------------------------------------------------
 # Implement explore such that the robot:
 #     Finds the front and side proximity to a wall.
