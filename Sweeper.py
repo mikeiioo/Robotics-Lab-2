@@ -24,6 +24,7 @@ ROTATION_DIR = ""         # The direction the robot needs to explore.
 CORNERS = []             # A list that stores all the corners as the robot explores.
 DESTINATION = ()         # The point that is the farthest away from the robot.
                          # This point becomes the robot's final destination.
+FINAL_D = False          # did you make it to the end?
 
 # Constants - Do not change.
 ARRIVAL_THRESHOLD = 5    # We say that the robot has arrived at its final
@@ -109,7 +110,7 @@ async def when_either_bumped(robot):
 async def play(robot):
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
-    global SPEED, ROBOT_MOVE_DISTANCE
+    global SPEED, ROBOT_MOVE_DISTANCE, FINAL_D
   
     await robot.reset_navigation() 
     readings = (await robot.get_ir_proximity()).sensors
@@ -132,6 +133,9 @@ async def play(robot):
       if ROBOT_TOUCHED == True:
         await robot.set_wheel_speeds(0,0)
         await robot.set_lights_rgb(255, 0, 0)
+      if FINAL_D == True:
+        break
+      
       
 # --------------------------------------------------------
 # Implement explore such that the robot:
@@ -147,17 +151,40 @@ async def play(robot):
 async def explore(robot):
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
-    global SPEED, ROBOT_MOVE_DISTANCE
+    global SPEED, ROBOT_MOVE_DISTANCE, FINAL_D
+  
     readings = (await robot.get_ir_proximity()).sensors
-    left_readings = readings[0]
-    front_readings = readings[3]
-    right_readings = readings[-1]
-    front_proximity = 4095/(front_readings + 1)
-    left_proximity = 4095/(left_readings + 1)
-    right_proximity = 4095/(right_readings + 1)
-    
-    
-    
+
+    front_proximity = 4095/(readings[3] + 1)
+    side_proximity = 4095/(readings[SENSOR2CHECK] + 1)
+  
+    if front_proximity < 10:
+      await robot.set_wheel_speeds(0,0)
+      pos = await robot.get_position()
+      currPosition = (pos.x, pos.y)
+      CORNERS.append(currPosition)
+      
+      if not len(CORNERS) == 4:
+        if ROTATION_DIR == "right":
+          await robot.turn_right(90)
+        else:
+          await robot.turn_left(90)
+        await robot.set_wheel_speeds(SPEED,SPEED)
+      else:
+        DESTINATION = farthestDistance(currPosition, CORNERS)
+        print(f"{DESTINATION} is the farthest corner from the robot.")
+        HAS_EXPLORED == True
+
+    if side_proximity < 5:
+      if ROTATION_DIR == "right":
+          await robot.turn_right(3)
+        else:
+          await robot.turn_left(3)
+    elif side_proximity >= 10:
+      if ROTATION_DIR == "right":
+          await robot.turn_left(3)
+        else:
+          await robot.turn_right(3)
 
 
 
@@ -176,7 +203,7 @@ async def explore(robot):
 async def sweep(robot): # Change tolerance for sweep and changed the baby steps
     global HAS_COLLIDED, HAS_EXPLORED, HAS_SWEPT, SENSOR2CHECK
     global ROTATION_DIR, CORNERS, DESTINATION, ARRIVAL_THRESHOLD
-    global SPEED, ROBOT_MOVE_DISTANCE
+    global SPEED, ROBOT_MOVE_DISTANCE, FINAL_D
     pass
 
 # start the robot
